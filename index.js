@@ -6,6 +6,7 @@ const
     express = require('express'),
     bodyParser = require('body-parser'),
     request = require('request'),
+    fs= require('fs'),
     app = express().use(bodyParser.json());
 
 const { Client } = require('pg');
@@ -14,6 +15,8 @@ const client = new Client({
   connectionString: process.env.DATABASE_URL,
   ssl: false,
 });
+
+const questions = JSON.parse(fs.readFileSync('questions.json', 'utf8'));
 
 client.connect();
 
@@ -70,11 +73,16 @@ app.get('/webhook', (req, res) => {
 
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
+    var today = new Date();
+    var month = today.getMonth();
+    var date = today.getDate();
+    var todaysQuestion = questions[month + "," + date];
 
     let response;
 
     // Checks if the message contains text
-  if (received_message.text) {    
+  if (received_message.text) { 
+    saveResponse(psid, today, todaysQuestion, received_message.text, month, date);   
     response = {
       "attachment": {
         "type": "template",
@@ -113,7 +121,7 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    response = { "text": "Awesome! Here are your previous answers" }
+    response = { "text": "Awesome! Here are your previous answers:" }
   } else if (payload === 'no') {
     response = { "text": "Ok, have a great day! See you tomorrow" }
   }
@@ -146,12 +154,19 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
-function listEntries(psid, date) {
+function listEntries(psid) {
     client.query(`SELECT * FROM responses where psid = ${psid};`, (err, res) => {
       if (err) throw err;
       for (let row of res.rows) {
         console.log(JSON.stringify(row));
       }
       client.end();
+    });
+}
+
+function saveResponse(psid, date, question, answer, month, date) {
+    client.query(`INSERT INTO responses (psid, created_at, question, answer, month, day) VALUES (${psid}, ${date}, ${question}, ${answer}, ${month}, ${date});`, (err, res) => {
+        if (err) throw err;
+        client.end();
     });
 }
