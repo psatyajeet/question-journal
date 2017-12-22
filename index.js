@@ -1,6 +1,6 @@
 'use strict';
 
-const PAGE_ACCESS_TOKEN = "EAAB6iyZCFz9QBALUmTjfQc8po0Kfe1iXZAwfhiss6sF2906C50fktxM1ofH3R8S8bXuwS4ZAahzba4DwXWiIZBZC2MwiC5TYYQXnlIFhuZCbAGvccuvhMe2XouybuSbjhkXTuZCngbLU2E6rBN2OiCrowra9f72znVVPZBqqiMUfAgZDZD";
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
 const
     express = require('express'),
