@@ -164,8 +164,8 @@ function listEntries(psid) {
     });
 }
 
-function saveResponse(psid, date, question, answer, month, date) {
-    client.query(`INSERT INTO responses (psid, created_at, question, answer, month, day) VALUES (${psid}, ${date}, ${question}, ${answer}, ${month}, ${date});`, (err, res) => {
+function saveResponse(psid, date, question, answer, month, day) {
+    client.query(`INSERT INTO responses (psid, created_at, question, answer, month, day) VALUES (${psid}, ${date}, ${question}, ${answer}, ${month}, ${day});`, (err, res) => {
         if (err) throw err;
         client.end();
     });
