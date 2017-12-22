@@ -113,9 +113,9 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    response = { "text": "Thanks!" }
+    response = { "text": "Awesome! Here are your previous answers" }
   } else if (payload === 'no') {
-    response = { "text": "Oops, try sending another image." }
+    response = { "text": "Ok, have a great day! See you tomorrow" }
   }
   // Send the message to acknowledge the postback
   callSendAPI(sender_psid, response);
@@ -146,7 +146,7 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
-function listEntries(psid) {
+function listEntries(psid, date) {
     client.query(`SELECT * FROM responses where psid = ${psid};`, (err, res) => {
       if (err) throw err;
       for (let row of res.rows) {
