@@ -89,9 +89,8 @@ function handleMessage(sender_psid, received_message) {
         "payload": {
           "template_type": "generic",
           "elements": [{
-            "title": "Is this the right picture?",
+            "title": "`You sent the message: "${received_message.text}". Do you want to see your previous answers?`",
             "subtitle": "Tap a button to answer.",
-            "image_url": attachment_url,
             "buttons": [
               {
                 "type": "postback",
