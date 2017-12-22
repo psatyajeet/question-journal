@@ -44,7 +44,7 @@ app.post('/webhook', (req, res) => {
             }
         });
 
-        res.status(200).send('EVENT_RECEIVED');
+        res.status(200).send('EVENT_RECEIVED\n');
     } else {
         res.sendStatus(404);
     }
@@ -60,7 +60,7 @@ app.get('/webhook', (req, res) => {
 
     if (mode && token) {
         if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-            console.log('WEBHOOK_VERIFIED');
+            console.log('WEBHOOK_VERIFIED\n');
             res.status(200).send(challenge);
         } else {
             res.sendStatus(403);
@@ -156,7 +156,7 @@ function callSendAPI(sender_psid, response) {
 }
 
 function listEntries(psid) {
-    client.query(`SELECT * FROM schema_log where psid = ${psid};`, (err, res) => {
+    client.query(`SELECT * FROM responses where psid = ${psid};`, (err, res) => {
       if (err) throw err;
       for (let row of res.rows) {
         console.log(JSON.stringify(row));
