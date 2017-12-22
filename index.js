@@ -89,7 +89,7 @@ function handleMessage(sender_psid, received_message) {
         "payload": {
           "template_type": "generic",
           "elements": [{
-            "title": "`You sent the message: "${received_message.text}". Do you want to see your previous answers?`",
+            "title": `You sent the message: ${received_message.text}. Do you want to see your previous answers?`,
             "subtitle": "Tap a button to answer.",
             "buttons": [
               {
