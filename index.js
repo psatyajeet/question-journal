@@ -156,14 +156,21 @@ function callSendAPI(sender_psid, response) {
 }
 
 function listEntries(psid) {
-    console.log(`SELECT * FROM responses where psid = ${psid};`);
-    client.query(`SELECT * FROM responses where psid = ${psid};`, (err, res) => {
-      if (err) throw err;
-      for (let row of res.rows) {
-        console.log(JSON.stringify(row));
+    client.query('SELECT NOW() as now', (err, res) => {
+      if (err) {
+        console.log(err.stack)
+      } else {
+        console.log(res.rows[0])
       }
-      client.end();
-    });
+    })
+    // console.log(`SELECT * FROM responses where psid = ${psid};`);
+    // client.query(`SELECT * FROM responses where psid = ${psid};`, (err, res) => {
+    //   if (err) throw err;
+    //   for (let row of res.rows) {
+    //     console.log(JSON.stringify(row));
+    //   }
+    //   client.end();
+    // });
 }
 
 function saveResponse(psid, date, question, answer, month, day) {
