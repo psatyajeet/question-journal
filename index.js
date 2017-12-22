@@ -122,7 +122,7 @@ function handlePostback(sender_psid, received_postback) {
   // Set the response based on the postback payload
   if (payload === 'yes') {
     results = listEntries(sender_psid).map((row) => {
-        return e.answer;
+        return row.answer;
     });
     response = { "text": `Awesome! Here are your previous answers: ${results}` }
   } else if (payload === 'no') {
@@ -158,9 +158,11 @@ function callSendAPI(sender_psid, response) {
 }
 
 function listEntries(psid) {
-    const result = client.query('SELECT * FROM responses where psid = $1', [ psid ])
-        .then(res => res)
-        .catch(e => console.error(e.stack));
+    const result = []
+    client.query('SELECT * FROM responses where psid = $1', [ psid ])
+        .then(res => result.push(res))
+        .catch(e => console.error(e.stack))
+        .then(() => client.end());
     return result;
 }
 
