@@ -82,7 +82,7 @@ function handleMessage(sender_psid, received_message) {
 
     // Checks if the message contains text
   if (received_message.text) { 
-    saveResponse(sender_psid, today, todaysQuestion, received_message.text, month, date);   
+    // saveResponse(sender_psid, today, todaysQuestion, received_message.text, month, date);   
     response = {
       "attachment": {
         "type": "template",
@@ -121,6 +121,7 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
+    listEntries(sender_psid);
     response = { "text": "Awesome! Here are your previous answers:" }
   } else if (payload === 'no') {
     response = { "text": "Ok, have a great day! See you tomorrow" }
