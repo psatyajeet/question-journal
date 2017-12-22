@@ -1,5 +1,7 @@
 'use strict';
 
+const PAGE_ACCESS_TOKEN = "EAAB6iyZCFz9QBALUmTjfQc8po0Kfe1iXZAwfhiss6sF2906C50fktxM1ofH3R8S8bXuwS4ZAahzba4DwXWiIZBZC2MwiC5TYYQXnlIFhuZCbAGvccuvhMe2XouybuSbjhkXTuZCngbLU2E6rBN2OiCrowra9f72znVVPZBqqiMUfAgZDZD";
+
 const
     express = require('express'),
     bodyParser = require('body-parser'),
@@ -13,8 +15,13 @@ app.post('/webhook', (req, res) => {
 
     if (body.object === 'page') {
         body.entry.forEach(function(entry) {
-            let webhookEvent = entry.messaging[0];
-            console.log(webhookEvent);
+            // Gets the body of the webhook event
+            let webhook_event = entry.messaging[0];
+            console.log(webhook_event);
+
+            // Get the sender PSID
+            let sender_psid = webhook_event.sender.id;
+            console.log('Sender PSID: ' + sender_psid);
         });
 
         res.status(200).send('EVENT_RECEIVED');
@@ -40,3 +47,18 @@ app.get('/webhook', (req, res) => {
         }
     }
 });
+
+// Handles messages events
+function handleMessage(sender_psid, received_message) {
+
+}
+
+// Handles messaging_postbacks events
+function handlePostback(sender_psid, received_postback) {
+
+}
+
+// Sends response messages via the Send API
+function callSendAPI(sender_psid, response) {
+  
+}
