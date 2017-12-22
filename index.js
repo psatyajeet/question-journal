@@ -121,7 +121,7 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    results = listEntries(sender_psid).map(function (row) => {
+    results = listEntries(sender_psid).map((row) => {
         return e.answer;
     });
     response = { "text": `Awesome! Here are your previous answers: ${results}` }
