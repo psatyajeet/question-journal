@@ -167,7 +167,7 @@ function listEntries(psid) {
 function saveResponse(psid, date, question, answer, month, day) {
     console.log(`${psid}, ${Date.now()}, ${question}, ${answer}, ${month}, ${day}`);
     var queryText = 'INSERT INTO responses(psid, created_at, question, answer, month, day) VALUES($1, $2, $3, $4, $5, $6)'
-    client.query(queryText, [psid, Date.now(), question, answer, month, day], (err, res) => {
+    client.query(queryText, [psid, Date.now(), String(question), String(answer), month, day], (err, res) => {
         if (err) throw err;
         client.end();
     });
