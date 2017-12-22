@@ -12,7 +12,7 @@ const { Client } = require('pg');
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: true,
+  ssl: false,
 });
 
 client.connect();
@@ -24,7 +24,6 @@ client.query('SELECT table_schema,table_name FROM information_schema.tables;', (
   }
   client.end();
 });
-
 
 app.listen(process.env.PORT || 1337, () => console.log(`webhook is listening on port ${process.env.PORT}`));
 
