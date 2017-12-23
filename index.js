@@ -156,7 +156,6 @@ function callSendAPI(sender_psid, response) {
 
 function listEntries(psid) {
     const result = []
-    const psid = 1758021500898600;
     client.connect((err) => {
       if (err) {
         console.error('connection error', err.stack)
@@ -164,7 +163,7 @@ function listEntries(psid) {
         console.log('connected')
       }
     });
-    client.query('SELECT * FROM responses', (err, res) => {
+    client.query('SELECT * FROM responses WHERE psid = $1' [ psid ], (err, res) => {
       if (err) {
         console.log(err.stack)
       } else {
