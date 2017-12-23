@@ -152,8 +152,6 @@ function callSendAPI(sender_psid, response) {
 }
 
 function listEntries(psid, response, sendFunction) {
-    let result = []
-    sendFunction(psid, response);
     pool.connect((err, client, release) => {
         if (err) {
             return console.error('Error acquiring client', err.stack)
@@ -165,14 +163,11 @@ function listEntries(psid, response, sendFunction) {
             } else {
                 console.log(res.rows);
                 res.rows.forEach((item, index, array) => {
-                    console.log(item.answer);
-                    sendFunction(psid, { "text": ` ${item.answer}` });
+                    sendFunction(psid, { "text": `${item.created_at}: ${item.answer}` });
                 });
             }
         })
     });
-    console.log(result);
-    return result;
 }
 
 function saveResponse(psid, date, question, answer, month, day) {
