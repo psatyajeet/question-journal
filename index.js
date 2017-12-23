@@ -9,12 +9,12 @@ const
     fs= require('fs'),
     app = express().use(bodyParser.json());
 
-const { Client } = require('pg');
+const { Pool } = require('pg')
 
-const client = new Client({
-  connectionString: process.env.DATABASE_URL,
-  ssl: false,
-});
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: false,
+})
 
 const questions = JSON.parse(fs.readFileSync('questions.json', 'utf8'));
 
@@ -33,8 +33,6 @@ app.post('/webhook', (req, res) => {
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
             console.log('Sender PSID: ' + sender_psid);
-
-            listEntries(sender_psid);
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
@@ -156,27 +154,20 @@ function callSendAPI(sender_psid, response) {
 
 function listEntries(psid) {
     const result = []
-    client.connect((err) => {
-      if (err) {
-        console.error('connection error', err.stack)
-      } else {
-        console.log('connected')
-      }
-    });
-    client.query('SELECT * FROM responses WHERE psid = $1', [ psid ], (err, res) => {
-      if (err) {
-        console.log(err.stack)
-      } else {
-        res.rows.forEach((item, index, array) => {
-            result.push(item.answer);
-        });
-      }
-    })
-    client.end((err) => {
-      console.log('client has disconnected')
-      if (err) {
-        console.log('error during disconnection', err.stack)
-      }
+    pool.connect((err, client, release) => {
+        if (err) {
+        return console.error('Error acquiring client', err.stack)
+        }
+        client.query('SELECT * FROM responses WHERE psid = $1', [ psid ], (err, res) => {
+            release()
+          if (err) {
+            console.log(err.stack)
+          } else {
+            res.rows.forEach((item, index, array) => {
+                result.push(item.answer);
+            });
+          }
+        })
     })
     return result;
 }
