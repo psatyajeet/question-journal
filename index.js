@@ -18,8 +18,6 @@ const client = new Client({
 
 const questions = JSON.parse(fs.readFileSync('questions.json', 'utf8'));
 
-client.connect();
-
 app.listen(process.env.PORT || 1337, () => console.log(`webhook is listening on port ${process.env.PORT}`));
 
 app.post('/webhook', (req, res) => {
@@ -121,9 +119,7 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    let results = listEntries(sender_psid).map((row) => {
-        return row.answer;
-    });
+    let results = listEntries(sender_psid);
     console.log(results);
     response = { "text": `Awesome! Here are your previous answers: ${results}` }
   } else if (payload === 'no') {
@@ -160,10 +156,29 @@ function callSendAPI(sender_psid, response) {
 
 function listEntries(psid) {
     const result = []
-    client.query('SELECT * FROM responses')
-        .then(res => result.push(res))
-        .catch(e => console.error(e.stack))
-        .then(() => client.end());
+    const psid = 1758021500898600;
+    client.connect((err) => {
+      if (err) {
+        console.error('connection error', err.stack)
+      } else {
+        console.log('connected')
+      }
+    });
+    client.query('SELECT * FROM responses', (err, res) => {
+      if (err) {
+        console.log(err.stack)
+      } else {
+        res.rows.forEach((item, index, array) => {
+            result.push(item.answer);
+        });
+      }
+    })
+    client.end((err) => {
+      console.log('client has disconnected')
+      if (err) {
+        console.log('error during disconnection', err.stack)
+      }
+    })
     return result;
 }
 
