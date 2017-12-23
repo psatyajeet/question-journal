@@ -124,7 +124,7 @@ function handlePostback(sender_psid, received_postback) {
     let results = listEntries(sender_psid).map((row) => {
         return row.answer;
     });
-    console.log(results)
+    console.log(results);
     response = { "text": `Awesome! Here are your previous answers: ${results}` }
   } else if (payload === 'no') {
     response = { "text": "Ok, have a great day! See you tomorrow" }
@@ -151,7 +151,7 @@ function callSendAPI(sender_psid, response) {
     "json": request_body
   }, (err, res, body) => {
     if (!err) {
-      console.log('message sent!')
+      console.log('message sent!');
     } else {
       console.error("Unable to send message:" + err);
     }
@@ -164,6 +164,7 @@ function listEntries(psid) {
         .then(res => result.push(res))
         .catch(e => console.error(e.stack))
         .then(() => client.end());
+    console.log(result);
     return result;
 }
 
