@@ -165,11 +165,13 @@ function listEntries(psid) {
             } else {
                 console.log(res.rows)
                 res.rows.forEach((item, index, array) => {
+                    console.log(item.answer);
                     result.push(item.answer);
                 });
             }
         })
     })
+    console.log(result);
     return result;
 }
 
