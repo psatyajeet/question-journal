@@ -117,14 +117,13 @@ function handlePostback(sender_psid, received_postback) {
 
   // Set the response based on the postback payload
   if (payload === 'yes') {
-    let results = listEntries(sender_psid);
-    console.log(results);
-    response = { "text": `Awesome! Here are your previous answers: ${results}` }
+    response = { "text": `Awesome! Here are your previous answers:` }
+    listEntries(sender_psid, response, callSendAPI);
   } else if (payload === 'no') {
     response = { "text": "Ok, have a great day! See you tomorrow" }
+    callSendAPI(sender_psid, response);
   }
   // Send the message to acknowledge the postback
-  callSendAPI(sender_psid, response);
 }
 
 // Sends response messages via the Send API
@@ -152,25 +151,26 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
-function listEntries(psid) {
+function listEntries(psid, response, sendFunction) {
     let result = []
+    sendFunction(psid, response);
     pool.connect((err, client, release) => {
         if (err) {
             return console.error('Error acquiring client', err.stack)
         }
-        client.query('SELECT * FROM responses', (err, res) => {
-            release()
+        client.query('SELECT * FROM responses WHERE psid = $1', [ psid ], (err, res) => {
+            release();
             if (err) {
-                console.log(err.stack)
+                console.log(err.stack);
             } else {
-                console.log(res.rows)
+                console.log(res.rows);
                 res.rows.forEach((item, index, array) => {
                     console.log(item.answer);
-                    result.push(item.answer);
+                    sendFunction(psid, item.answer);
                 });
             }
         })
-    })
+    });
     console.log(result);
     return result;
 }
