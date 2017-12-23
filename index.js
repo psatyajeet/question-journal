@@ -154,7 +154,6 @@ function callSendAPI(sender_psid, response) {
 function listEntries(psid, response, sendFunction) {
     let result = []
     sendFunction(psid, response);
-    sendFunction(psid, response);
     pool.connect((err, client, release) => {
         if (err) {
             return console.error('Error acquiring client', err.stack)
@@ -167,8 +166,7 @@ function listEntries(psid, response, sendFunction) {
                 console.log(res.rows);
                 res.rows.forEach((item, index, array) => {
                     console.log(item.answer);
-                    sendFunction(psid, response);
-                    sendFunction(psid, item.answer);
+                    sendFunction(psid, { "text": ` ${item.answer}` });
                 });
             }
         })
