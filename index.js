@@ -160,11 +160,10 @@ function callSendAPI(sender_psid, response) {
 
 function listEntries(psid) {
     const result = []
-    client.query('SELECT * FROM responses where psid = $1', [ psid ])
+    client.query('SELECT * FROM responses')
         .then(res => result.push(res))
         .catch(e => console.error(e.stack))
         .then(() => client.end());
-    console.log(result);
     return result;
 }
 
