@@ -163,7 +163,7 @@ function listEntries(psid) {
         console.log('connected')
       }
     });
-    client.query('SELECT * FROM responses WHERE psid = $1' [ psid ], (err, res) => {
+    client.query('SELECT * FROM responses WHERE psid = $1', [ psid ], (err, res) => {
       if (err) {
         console.log(err.stack)
       } else {
