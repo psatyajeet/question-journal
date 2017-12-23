@@ -124,6 +124,7 @@ function handlePostback(sender_psid, received_postback) {
     let results = listEntries(sender_psid).map((row) => {
         return row.answer;
     });
+    console.log(results)
     response = { "text": `Awesome! Here are your previous answers: ${results}` }
   } else if (payload === 'no') {
     response = { "text": "Ok, have a great day! See you tomorrow" }
