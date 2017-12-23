@@ -156,13 +156,14 @@ function listEntries(psid) {
     let result = []
     pool.connect((err, client, release) => {
         if (err) {
-        return console.error('Error acquiring client', err.stack)
+            return console.error('Error acquiring client', err.stack)
         }
         client.query('SELECT * FROM responses', (err, res) => {
             release()
             if (err) {
                 console.log(err.stack)
             } else {
+                console.log(res.rows)
                 res.rows.forEach((item, index, array) => {
                     result.push(item.answer);
                 });
