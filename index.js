@@ -153,20 +153,20 @@ function callSendAPI(sender_psid, response) {
 }
 
 function listEntries(psid) {
-    const result = []
+    let result = []
     pool.connect((err, client, release) => {
         if (err) {
         return console.error('Error acquiring client', err.stack)
         }
-        client.query('SELECT * FROM responses WHERE psid = $1', [ psid ], (err, res) => {
+        client.query('SELECT * FROM responses', (err, res) => {
             release()
-          if (err) {
-            console.log(err.stack)
-          } else {
-            res.rows.forEach((item, index, array) => {
-                result.push(item.answer);
-            });
-          }
+            if (err) {
+                console.log(err.stack)
+            } else {
+                res.rows.forEach((item, index, array) => {
+                    result.push(item.answer);
+                });
+            }
         })
     })
     return result;
