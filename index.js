@@ -24,13 +24,10 @@ app.post('/webhook', (req, res) => {
 
     let body = req.body;
 
-    console.log(`body: ${1}`, body);
     if (body.object === 'page') {
         body.entry.forEach(function(entry) {
             // Gets the body of the webhook event
             let webhook_event = entry.messaging[0];
-            console.log(`body.entry: ${1}`, body.entry);
-            console.log(webhook_event);
 
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
@@ -113,6 +110,9 @@ function handleMessage(sender_psid, received_message) {
 // Handles messaging_postbacks events
 function handlePostback(sender_psid, received_postback) {
   let response;
+  var today = new Date();
+  var month = today.getMonth();
+  var date = today.getDate();
   
   // Get the payload for the postback
   let payload = received_postback.payload;
@@ -120,7 +120,7 @@ function handlePostback(sender_psid, received_postback) {
   // Set the response based on the postback payload
   if (payload === 'yes') {
     response = { "text": `Awesome! Here are your previous answers:` }
-    listEntries(sender_psid, response, callSendAPI);
+    listEntries(sender_psid, month, date, response, callSendAPI);
   } else if (payload === 'no') {
     response = { "text": "Ok, have a great day! See you tomorrow" }
     callSendAPI(sender_psid, response);
@@ -153,19 +153,20 @@ function callSendAPI(sender_psid, response) {
   }); 
 }
 
-function listEntries(psid, response, sendFunction) {
+function listEntries(psid, month, date, response, sendFunction) {
     pool.connect((err, client, release) => {
         if (err) {
             return console.error('Error acquiring client', err.stack)
         }
-        client.query('SELECT * FROM responses WHERE psid = $1', [ psid ], (err, res) => {
+        client.query('SELECT * FROM responses WHERE psid = $1 AND month = $2 and day = $3', [ psid, month, date ], (err, res) => {
             release();
             if (err) {
                 console.log(err.stack);
             } else {
-                console.log(res.rows);
                 res.rows.forEach((item, index, array) => {
-                    sendFunction(psid, { "text": `${item.created_at}: ${item.answer}` });
+                    var textToSend = { "text": `${item.created_at}: ${item.answer}` };
+                    console.log(textToSend);
+                    sendFunction(psid, textToSend);
                 });
             }
         })
@@ -175,8 +176,14 @@ function listEntries(psid, response, sendFunction) {
 function saveResponse(psid, date, question, answer, month, day) {
     console.log(`${psid}, ${Date.now()}, ${question}, ${answer}, ${month}, ${day}`);
     var queryText = 'INSERT INTO responses(psid, created_at, question, answer, month, day) VALUES($1, $2, $3, $4, $5, $6)'
-    client.query(queryText, [psid, Date.now(), String(question), String(answer), month, day], (err, res) => {
-        if (err) throw err;
-        client.end();
+    pool.connect((err, client, release) => {
+        if (err) {
+            return console.error('Error acquiring client', err.stack)
+        }
+        client.query(queryText, [psid, Date.now(), String(question), String(answer), month, day], (err, res) => {
+            release();
+            if (err) throw err;
+        });
     });
+
 }
