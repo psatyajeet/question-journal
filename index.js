@@ -77,7 +77,7 @@ function handleMessage(sender_psid, received_message) {
 
     // Checks if the message contains text
     if (received_message.text) { 
-        // saveResponse(sender_psid, today, todaysQuestion, received_message.text, month, date);   
+        saveResponse(sender_psid, todaysQuestion, received_message.text, month, date);   
         response = {
             "attachment": {
                 "type": "template",
@@ -139,18 +139,18 @@ function callSendAPI(sender_psid, response) {
     }
 
     // Send the HTTP request to the Messenger Platform
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": PAGE_ACCESS_TOKEN },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('message sent!');
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    }); 
+    // request({
+    //     "uri": "https://graph.facebook.com/v2.6/me/messages",
+    //     "qs": { "access_token": PAGE_ACCESS_TOKEN },
+    //     "method": "POST",
+    //     "json": request_body
+    // }, (err, res, body) => {
+    //     if (!err) {
+    //         console.log('message sent!');
+    //     } else {
+    //         console.error("Unable to send message:" + err);
+    //     }
+    // }); 
 }
 
 function listEntries(psid, month, date, response, sendFunction) {
@@ -173,14 +173,14 @@ function listEntries(psid, month, date, response, sendFunction) {
     });
 }
 
-function saveResponse(psid, date, question, answer, month, day) {
+function saveResponse(psid, question, answer, month, day) {
     console.log(`${psid}, ${Date.now()}, ${question}, ${answer}, ${month}, ${day}`);
-    var queryText = 'INSERT INTO responses(psid, created_at, question, answer, month, day) VALUES($1, $2, $3, $4, $5, $6)'
+    var queryText = 'INSERT INTO responses(psid, created_at, question, answer, month, day) VALUES($1, now(), $2, $3, $4, $5)'
     pool.connect((err, client, release) => {
         if (err) {
             return console.error('Error acquiring client', err.stack)
         }
-        client.query(queryText, [psid, Date.now(), String(question), String(answer), month, day], (err, res) => {
+        client.query(queryText, [psid, String(question), String(answer), month, day], (err, res) => {
             release();
             if (err) throw err;
         });
