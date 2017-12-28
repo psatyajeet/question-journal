@@ -2,26 +2,33 @@
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
-const
+var
     express = require('express'),
     bodyParser = require('body-parser'),
     request = require('request'),
-    fs= require('fs'),
+    fs = require('fs'),
     app = express().use(bodyParser.json());
 
-const { Pool } = require('pg')
+var { Pool } = require('pg')
 
-const pool = new Pool({
+var pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: false,
 })
 
 const questions = JSON.parse(fs.readFileSync('questions.json', 'utf8'));
 
+var CronJob = require('cron').CronJob;
+
+var job = new CronJob({
+    cronTime: '00 00 07 * * *', 
+    onTick: messageUsersQuestionOfDay,
+    start: true,
+    timeZone: 'America/Los_Angeles'});
+
 app.listen(process.env.PORT || 1337, () => console.log(`webhook is listening on port ${process.env.PORT}`));
 
 app.post('/webhook', (req, res) => {
-
     let body = req.body;
 
     if (body.object === 'page') {
@@ -151,6 +158,10 @@ function callSendAPI(sender_psid, response) {
             console.error("Unable to send message:" + err);
         }
     }); 
+}
+
+function messageUsersQuestionOfDay() {
+    console.log('testing crons');
 }
 
 function listEntries(psid, month, date, response, sendFunction) {
