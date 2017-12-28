@@ -73,6 +73,10 @@ app.get('/webhook', (req, res) => {
     }
 });
 
+function messageUsersQuestionOfDay() {
+    console.log('testing crons');
+}
+
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     var today = new Date();
@@ -158,10 +162,6 @@ function callSendAPI(sender_psid, response) {
             console.error("Unable to send message:" + err);
         }
     }); 
-}
-
-function messageUsersQuestionOfDay() {
-    console.log('testing crons');
 }
 
 function listEntries(psid, month, date, response, sendFunction) {
