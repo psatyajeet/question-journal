@@ -73,15 +73,15 @@ function handleMessage(sender_psid, received_message) {
     if (received_message.text) { 
         saveResponse(sender_psid, todaysQuestion, received_message.text, month, date);
 
-        responses.push({ "text": `Today's question was: ${todaysQuestion}.\nYou sent the message: ${received_message.text}.` });
+        responses.push({ "text": `Today's question was: ${todaysQuestion}\nYour response was: ${received_message.text}` });
         responses.push({
             "attachment": {
                 "type": "template",
                 "payload": {
                     "template_type": "generic",
                     "elements": [{
-                        "title": `Do you want to see your previous answers?`,
-                        "subtitle": "Tap a button to answer.",
+                        "title": `Do you want to see your previous answers on this date?`,
+                        "subtitle": `${todaysQuestion}`,
                         "buttons": [
                         {
                             "type": "postback",
