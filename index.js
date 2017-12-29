@@ -95,9 +95,12 @@ function handleNewUser(sender_psid, todays_question) {
     saveUser(sender_psid);
 
     var responses = [];
-    responses.push({ "text": `Welcome to the Question of the Day bot 😀 I will send you a question every morning which you can answer.\n\
-        After you answer a question, you'll have the option to see your previous answers on that date.\n\n\
-        Today's question is: ${todays_question}\nPlease respond with your answer!` });
+    responses.push({ "text": [`Welcome to the Question of the Day bot 😀`,
+        `I will send you a question every morning which you can answer.`
+        `After you answer a question, you'll have the option to see your previous answers on that date.`,
+        ``
+        `Today's question is: ${todays_question}`,
+        `Please respond with your answer!`].join("\n")});
 
     responses.forEach(response => messenger.callSendAPI(sender_psid, response));
 }
