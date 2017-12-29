@@ -167,19 +167,27 @@ function listEntries(psid, month, date, response, sendFunction) {
         if (err) {
             return console.error('Error acquiring client', err.stack)
         }
-        client.query('SELECT * FROM responses WHERE psid = $1 AND month = $2 and day = $3', [ psid, month, date ], (err, res) => {
+        client.query('SELECT * FROM responses WHERE psid = $1 AND month = $2 and day = $3 ORDER BY created_at', [ psid, month, date ], (err, res) => {
             release();
             if (err) {
                 console.log(err.stack);
             } else {
                 res.rows.forEach((item, index, array) => {
-                    var textToSend = { "text": `${item.created_at}: ${item.answer}` };
-                    console.log(textToSend);
+                    var textToSend = { "text": `Response on ${formatDate(item.created_at)}: ${item.answer}` };
                     sendFunction(psid, textToSend);
                 });
             }
         })
     });
+}
+
+function formatDate(date) {
+    return new Date(date + "Z").toLocaleDateString('en-US', {
+        day : 'numeric',
+        month : 'long',
+        year : 'numeric',
+        timeZone : 'America/Los_Angeles'
+    })
 }
 
 function saveUser(psid) {
