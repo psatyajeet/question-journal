@@ -6,9 +6,9 @@
     "11,26": "If you could travel anywhere tomorrow, where would you go?",
     "11,27": "What did you eat for breakfast today?",
     "11,28": "Do you enjoy cooking? Do you have time for it?",
-    "11,29": "Are you active?",
+    "11,29": "Favorite quote",
     "11,30": "If I gave you a million dollars tomorrow, what would you do?",
-    "11,31": "Favorite quote",
+    "11,31": "What were your most memorable moments of last year?",
     "0,1": "Where were you on New Year's Eve?",
     "0,2": "What was your last vacation?",
     "0,3": "Are you in a relationship?",
@@ -23,5 +23,9 @@
     "0,12": "When was the last time you were in a hospital?",
     "0,13": "Name your favorite restaurant in the current city you live",
     "0,14": "What is a pet peeve of yours?",
+    "0,15": "Are you active?",
+    "0,16": "Describe the sounds around you",
+    "0,17": "What city are you in?",
+    "0,18": "What was the last movie you saw?",
     "7,1": "When was the last time you saw a family member?"
 }
