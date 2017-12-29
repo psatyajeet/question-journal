@@ -2,26 +2,24 @@
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
-const
+var
     express = require('express'),
     bodyParser = require('body-parser'),
     request = require('request'),
-    fs= require('fs'),
+    questions = require('./importQuestions.js'),
     app = express().use(bodyParser.json());
 
-const { Pool } = require('pg')
+var { Pool } = require('pg')
 
-const pool = new Pool({
+var pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: false,
 })
 
-const questions = JSON.parse(fs.readFileSync('questions.json', 'utf8'));
 
 app.listen(process.env.PORT || 1337, () => console.log(`webhook is listening on port ${process.env.PORT}`));
 
 app.post('/webhook', (req, res) => {
-
     let body = req.body;
 
     if (body.object === 'page') {
@@ -71,7 +69,7 @@ function handleMessage(sender_psid, received_message) {
     var today = new Date();
     var month = today.getMonth();
     var date = today.getDate();
-    var todaysQuestion = questions[month + "," + date];
+    var todaysQuestion = questions.getQuestion(month, date);
 
     let response;
 

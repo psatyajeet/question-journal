@@ -1,2 +1,4 @@
 *.pem
 secrets.properties
+.env
+.env.local
