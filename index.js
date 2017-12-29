@@ -6,7 +6,7 @@ var
     express = require('express'),
     bodyParser = require('body-parser'),
     request = require('request'),
-    fs = require('fs'),
+    questions = require('./importQuestions.js'),
     app = express().use(bodyParser.json());
 
 var { Pool } = require('pg')
@@ -16,15 +16,6 @@ var pool = new Pool({
     ssl: false,
 })
 
-const questions = JSON.parse(fs.readFileSync('questions.json', 'utf8'));
-
-var CronJob = require('cron').CronJob;
-
-var job = new CronJob({
-    cronTime: '00 00 07 * * *', 
-    onTick: messageUsersQuestionOfDay,
-    start: true,
-    timeZone: 'America/Los_Angeles'});
 
 app.listen(process.env.PORT || 1337, () => console.log(`webhook is listening on port ${process.env.PORT}`));
 
@@ -73,16 +64,12 @@ app.get('/webhook', (req, res) => {
     }
 });
 
-function messageUsersQuestionOfDay() {
-    console.log('testing crons');
-}
-
 // Handles messages events
 function handleMessage(sender_psid, received_message) {
     var today = new Date();
     var month = today.getMonth();
     var date = today.getDate();
-    var todaysQuestion = questions[month + "," + date];
+    var todaysQuestion = questions.getQuestion(month, date);
 
     let response;
 
