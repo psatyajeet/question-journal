@@ -14,7 +14,6 @@ var pool = new Pool({
     ssl: false,
 })
 
-
 app.listen(process.env.PORT || 1337, () => console.log(`webhook is listening on port ${process.env.PORT}`));
 
 app.post('/webhook', (req, res) => {
@@ -27,7 +26,6 @@ app.post('/webhook', (req, res) => {
 
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
-            console.log('Sender PSID: ' + sender_psid);
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
@@ -135,10 +133,9 @@ function handleExistingUser(sender_psid, received_message, month, date, todays_q
                     }]
                 }
             }
-        }
+        });
     } 
-
-    messenger.callSendAPI(sender_psid, response);
+    responses.forEach(response => messenger.callSendAPI(sender_psid, response));
 }
 
 // Handles messaging_postbacks events
