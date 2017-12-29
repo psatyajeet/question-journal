@@ -67,21 +67,59 @@ function handleMessage(sender_psid, received_message) {
     var today = new Date();
     var month = today.getMonth();
     var date = today.getDate();
-    var todaysQuestion = questions.getQuestion(month, date);
+    var todays_question = questions.getQuestion(month, date);
 
-    let response;
+    handleUserWithPsid(
+        sender_psid,
+        () => handleNewUser(sender_psid, todays_question),
+        () => handleExistingUser(sender_psid, received_message, month, date, todays_question));
+}
+
+function handleUserWithPsid(psid, new_user_function, existing_user_function) {
+    pool.connect((err, client, release) => {
+        if (err) {
+            return console.error('Error acquiring client', err.stack)
+        }
+        client.query('SELECT * FROM users WHERE psid = $1', [ psid ])
+            .then(result => {
+                if (result.rowCount === 0) {
+                    new_user_function();
+                } else {
+                    existing_user_function();
+                }
+            })
+            .catch(e => console.error(e.stack))
+            .then(() => release())
+    });
+}
+
+function handleNewUser(sender_psid, todays_question) {
+    saveUser(sender_psid);
+
+    var responses = [];
+    responses.push({ "text": `Welcome to the Question of the Day bot! I will send you a question every morning which you can answer. 
+        After you answer a question, you'll have the option to see your previous answers on that date.` });
+    responses.push({ "text": `Today's question is: ${todays_question}\nPlease respond with your answer 😀` });
+
+    responses.forEach(response => messenger.callSendAPI(sender_psid, response));
+}
+
+function handleExistingUser(sender_psid, received_message, month, date, todays_question) {
+    var responses = [];
 
     // Checks if the message contains text
     if (received_message.text) { 
-        saveResponse(sender_psid, todaysQuestion, received_message.text, month, date);   
-        response = {
+        saveResponse(sender_psid, todays_question, received_message.text, month, date);
+
+        responses.push({ "text": `Today's question was: ${todays_question}\nYour response was: ${received_message.text}` });
+        responses.push({
             "attachment": {
                 "type": "template",
                 "payload": {
                     "template_type": "generic",
                     "elements": [{
-                        "title": `You sent the message: ${received_message.text}. Do you want to see your previous answers?`,
-                        "subtitle": "Tap a button to answer.",
+                        "title": `Do you want to see your previous answers on this date?`,
+                        "subtitle": `${todays_question}`,
                         "buttons": [
                         {
                             "type": "postback",
@@ -144,6 +182,20 @@ function listEntries(psid, month, date, response, sendFunction) {
     });
 }
 
+function saveUser(psid) {
+    var queryText = 'INSERT INTO users(psid) VALUES($1)'
+    pool.connect((err, client, release) => {
+        if (err) {
+            return console.error('Error acquiring client', err.stack)
+        }
+        client.query(queryText, [psid], (err, res) => {
+            release();
+            if (err) throw err;
+        });
+    });
+
+}
+
 function saveResponse(psid, question, answer, month, day) {
     console.log(`${psid}, ${Date.now()}, ${question}, ${answer}, ${month}, ${day}`);
     var queryText = 'INSERT INTO responses(psid, created_at, question, answer, month, day) VALUES($1, now(), $2, $3, $4, $5)'
@@ -156,5 +208,4 @@ function saveResponse(psid, question, answer, month, day) {
             if (err) throw err;
         });
     });
-
 }
