@@ -67,15 +67,14 @@ function handleMessage(sender_psid, received_message) {
     var date = today.getDate();
     var todaysQuestion = questions.getQuestion(month, date);
 
-    let response;
-    let postback;
+    let responses = [];
 
     // Checks if the message contains text
     if (received_message.text) { 
         saveResponse(sender_psid, todaysQuestion, received_message.text, month, date);
 
-        response = { "text": `Today's question was: ${todaysQuestion}.\nYou sent the message: ${received_message.text}.` }
-        postback = {
+        responses.push({ "text": `Today's question was: ${todaysQuestion}.\nYou sent the message: ${received_message.text}.` });
+        responses.push({
             "attachment": {
                 "type": "template",
                 "payload": {
@@ -98,9 +97,9 @@ function handleMessage(sender_psid, received_message) {
                     }]
                 }
             }
-        }
+        });
     } 
-    messenger.callSendAPI(sender_psid, postback);
+    responses.forEach(response => messenger.callSendAPI(sender_psid, response));
 }
 
 // Handles messaging_postbacks events
