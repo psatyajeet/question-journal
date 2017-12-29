@@ -14,7 +14,6 @@ var pool = new Pool({
     ssl: false,
 })
 
-
 app.listen(process.env.PORT || 1337, () => console.log(`webhook is listening on port ${process.env.PORT}`));
 
 app.post('/webhook', (req, res) => {
@@ -27,7 +26,6 @@ app.post('/webhook', (req, res) => {
 
             // Get the sender PSID
             let sender_psid = webhook_event.sender.id;
-            console.log('Sender PSID: ' + sender_psid);
 
             // Check if the event is a message or postback and
             // pass the event to the appropriate handler function
@@ -70,17 +68,20 @@ function handleMessage(sender_psid, received_message) {
     var todaysQuestion = questions.getQuestion(month, date);
 
     let response;
+    let postback;
 
     // Checks if the message contains text
     if (received_message.text) { 
-        saveResponse(sender_psid, todaysQuestion, received_message.text, month, date);   
-        response = {
+        saveResponse(sender_psid, todaysQuestion, received_message.text, month, date);
+
+        response = { "text": `Today's question was: ${todaysQuestion}.\nYou sent the message: ${received_message.text}.` }
+        postback = {
             "attachment": {
                 "type": "template",
                 "payload": {
                     "template_type": "generic",
                     "elements": [{
-                        "title": `You sent the message: ${received_message.text}. Do you want to see your previous answers?`,
+                        "title": `Do you want to see your previous answers?`,
                         "subtitle": "Tap a button to answer.",
                         "buttons": [
                         {
@@ -99,8 +100,7 @@ function handleMessage(sender_psid, received_message) {
             }
         }
     } 
-
-    messenger.callSendAPI(sender_psid, response);
+    messenger.callSendAPI(sender_psid, postback);
 }
 
 // Handles messaging_postbacks events
