@@ -16,7 +16,7 @@ function callSendAPI(psid, response) {
         "recipient": {
             "id": psid
         },
-        "message": response
+        "message": response,
         "messaging_type": "MESSAGE_TAG",
         "tag": "BUSINESS_PRODUCTIVITY"
     }
