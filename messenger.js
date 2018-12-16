@@ -17,6 +17,8 @@ function callSendAPI(psid, response) {
             "id": psid
         },
         "message": response
+        "messaging_type": "MESSAGE_TAG",
+        "tag": "BUSINESS_PRODUCTIVITY"
     }
 
     // Send the HTTP request to the Messenger Platform
