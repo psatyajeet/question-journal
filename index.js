@@ -100,7 +100,7 @@ function handleNewUser(sender_psid, todays_question) {
         `After you answer a question, you'll have the option to see your previous answers on that date.`,
         ``,
         `Today's question is: ${todays_question}`,
-        `Please respond with your answer!`].join("\n")});    
+        `Please respond with your answer!`].join("\n")});
 
     responses.forEach(response => messenger.callSendAPI(sender_psid, response));
 }
@@ -109,7 +109,7 @@ function handleExistingUser(sender_psid, received_message, month, date, todays_q
     var responses = [];
 
     // Checks if the message contains text
-    if (received_message.text) { 
+    if (received_message.text) {
         saveResponse(sender_psid, todays_question, received_message.text, month, date);
 
         responses.push({ "text": `Today's question was: ${todays_question}\nYour response was: ${received_message.text}` });
@@ -137,7 +137,7 @@ function handleExistingUser(sender_psid, received_message, month, date, todays_q
                 }
             }
         });
-    } 
+    }
     responses.forEach(response => messenger.callSendAPI(sender_psid, response));
 }
 
